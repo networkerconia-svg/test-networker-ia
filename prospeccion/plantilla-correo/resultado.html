@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tu resultado del test: ¿Tu multinivel te impulsa o te limita?</title>
+</head>
+<!--
+  Plantilla del correo de resultado (para n8n u otro servicio de envío).
+  Asunto: Tu resultado del test: ¿Tu multinivel te impulsa o te limita?
+  Variables a reemplazar:
+    {{NOMBRE}}        nombre del participante
+    {{RESULTADO}}     título del resultado
+    {{DESCRIPCION}}   descripción del resultado (párrafos en <p>)
+    {{WHATSAPP_URL}}  enlace de WhatsApp de Martha (https://wa.me/57...)
+    {{LOGO_URL}}      URL pública del logo, p. ej. https://TU-DOMINIO/assets/img/logo-correo.png
+-->
+<body style="margin:0;padding:0;background:#FFF9F2;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FFF9F2;">
+    <tr><td align="center" style="padding:28px 12px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#FFFFFF;border-radius:18px;border:1px solid #eee3d3;overflow:hidden;font-family:Arial,Helvetica,sans-serif;color:#142D4E;">
+        <tr><td style="height:5px;background:#16A6A1;background:linear-gradient(90deg,#16A6A1,#D4AD63,#E8A04A);font-size:0;line-height:0;">&nbsp;</td></tr>
+        <tr><td align="center" style="padding:28px 28px 8px;">
+          <img src="{{LOGO_URL}}" width="96" height="96" alt="Martha Lucía Hoyos" style="display:block;border-radius:50%;border:3px solid #D4AD63;">
+        </td></tr>
+        <tr><td style="padding:12px 32px 0;font-size:16px;line-height:1.6;">
+          <p style="margin:0 0 12px;">Hola, <strong>{{NOMBRE}}</strong>.</p>
+          <p style="margin:0 0 18px;">¡Gracias por realizar nuestro test!</p>
+          <p style="margin:0 0 10px;color:#4d5f78;">De acuerdo con tus respuestas, este es el resultado de tu evaluación:</p>
+        </td></tr>
+        <tr><td style="padding:6px 32px 4px;">
+          <div style="background:#eefaf9;border-left:5px solid #16A6A1;border-radius:12px;padding:18px 20px;">
+            <p style="margin:0 0 10px;font-size:21px;font-weight:bold;color:#142D4E;line-height:1.3;">{{RESULTADO}}</p>
+            <div style="font-size:15.5px;line-height:1.6;color:#3f5270;">{{DESCRIPCION}}</div>
+          </div>
+        </td></tr>
+        <tr><td style="padding:18px 32px 0;font-size:16px;line-height:1.6;">
+          <p style="margin:0 0 12px;">Quiero invitarte a reflexionar sobre algo:</p>
+          <p style="margin:0 0 12px;background:#fdf3e6;border-radius:12px;padding:14px 16px;color:#142D4E;">¿Y si existiera una empresa de mercadeo en red que te ofreciera mejores posibilidades para desarrollar tu negocio, generar ingresos residuales y brindar mayor bienestar a tu familia?</p>
+          <p style="margin:0 0 12px;">Yo elegí una empresa para desarrollar mi negocio y quiero darte la oportunidad de conocerla.</p>
+          <p style="margin:0 0 18px;">Si deseas conversar conmigo y conocer esta oportunidad, puedes hacerlo a través de WhatsApp:</p>
+        </td></tr>
+        <tr><td align="center" style="padding:0 32px 26px;">
+          <a href="{{WHATSAPP_URL}}" style="display:inline-block;background:#16A6A1;color:#FFFFFF;text-decoration:none;font-weight:bold;font-size:16px;letter-spacing:.03em;padding:15px 30px;border-radius:999px;border:2px solid #ead3a0;">QUIERO CONOCER ESTA OPORTUNIDAD</a>
+        </td></tr>
+        <tr><td style="padding:0 32px 30px;font-size:16px;line-height:1.5;border-top:1px solid #f0e6d6;">
+          <p style="margin:22px 0 4px;">Un abrazo,</p>
+          <p style="margin:0;font-family:'Brush Script MT',cursive;font-size:30px;color:#142D4E;">Martha Lucía Hoyos C.</p>
+          <p style="margin:2px 0 0;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:#b48a3e;font-weight:bold;">Empresaria y líder en mercadeo en red</p>
+        </td></tr>
+      </table>
+      <p style="max-width:600px;margin:14px auto 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#8a97a8;line-height:1.5;">Recibiste este correo porque realizaste el test «¿Tu multinivel te impulsa o te limita?» y autorizaste el tratamiento de tus datos.</p>
+    </td></tr>
+  </table>
+</body>
+</html>
