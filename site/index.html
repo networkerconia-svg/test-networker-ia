@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Test digital · Networker con IA</title>
+  <meta name="description" content="Responde 3 preguntas y descubre qué está frenando la prospección de tu negocio multinivel y qué puedes mejorar con inteligencia artificial.">
+  <meta name="theme-color" content="#020B2B">
+  <meta property="og:title" content="¿Qué está frenando el crecimiento de tu negocio multinivel?">
+  <meta property="og:description" content="Test digital de Networker con IA: 3 preguntas, un resultado personalizado.">
+  <link rel="icon" href="assets/img/logo-networker-ia.webp?v=20261113" type="image/webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=20261113">
+  <script>document.documentElement.classList.add("js");</script>
+  <script defer src="lib/manifest.js?v=20261113"></script>
+  <script defer src="main.js?v=20261113"></script>
+</head>
+<body>
+  <canvas class="net" aria-hidden="true"></canvas>
+  <div class="glow" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#inicio" data-go="0" aria-label="Volver al inicio">
+      <img src="assets/img/logo-networker-ia.webp?v=20261113" alt="" width="40" height="40">
+      <span>Networker <b>con IA</b></span>
+    </a>
+    <ol class="steps" aria-label="Avance del test">
+      <li data-step="0"><span>Inicio</span></li>
+      <li data-step="1"><span>1</span></li>
+      <li data-step="2"><span>2</span></li>
+      <li data-step="3"><span>3</span></li>
+      <li data-step="5"><span>Resultado</span></li>
+      <li data-step="6"><span>Comunidad</span></li>
+    </ol>
+  </header>
+
+  <main class="stage" id="stage">
+
+    <!-- 0 · BIENVENIDA -->
+    <section class="slide slide--welcome is-active" data-index="0" aria-labelledby="t-welcome">
+      <div class="welcome">
+        <div class="logo-orb">
+          <span class="orb-ring" aria-hidden="true"></span>
+          <img src="assets/img/logo-networker-ia.webp?v=20261113" alt="Logo Networker con IA — Tu multinivel con IA" width="480" height="480">
+        </div>
+        <div class="welcome-copy">
+          <p class="eyebrow">Test digital · Networker con IA</p>
+          <h1 id="t-welcome" class="title">
+            ¿Qué está frenando <span class="hl-green">el crecimiento</span> de tu negocio <span class="hl-gold">multinivel?</span>
+          </h1>
+          <p class="lead">Descubre cómo puedes mejorar tu prospección y llevar tu negocio al siguiente nivel con <strong>inteligencia artificial</strong>.</p>
+          <div class="bubble">
+            <p>¿Estás intentando conseguir prospectos por internet, publicando en redes sociales o grabando videos, pero no consigues los resultados que esperas?</p>
+            <p>Responde estas tres preguntas y descubre qué está frenando tu prospección y qué puedes comenzar a mejorar con ayuda de la inteligencia artificial.</p>
+          </div>
+          <ul class="chips">
+            <li><i aria-hidden="true">✓</i>3 preguntas</li>
+            <li><i aria-hidden="true">✓</i>Resultado personalizado</li>
+            <li><i aria-hidden="true">◷</i>¡Solo unos minutos!</li>
+          </ul>
+          <button class="btn btn--start" type="button" data-next>
+            Comenzar test
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1 · PREGUNTA 1 -->
+    <section class="slide slide--q" data-index="1" data-nojs="hide" aria-labelledby="t-q1">
+      <div class="q">
+        <div class="q-head">
+          <button class="back" type="button" data-prev aria-label="Volver a la pantalla anterior">← Atrás</button>
+          <p class="q-count">Pregunta <b>1</b> de 3</p>
+        </div>
+        <div class="q-bar" aria-hidden="true"><span style="--p:.333"></span></div>
+        <div class="q-ask">
+          <img class="q-avatar" src="assets/img/logo-networker-ia.webp?v=20261113" alt="" width="48" height="48">
+          <h2 id="t-q1" class="q-title">Cuando buscas prospectos por internet, ¿qué es lo que más te sucede?</h2>
+        </div>
+        <div class="options" role="radiogroup" aria-labelledby="t-q1" data-q="1">
+          <button class="opt" type="button" role="radio" aria-checked="false" data-points="1"><span class="opt-l">A</span><span class="opt-t">Publico en mis redes, pero casi nadie me contacta y no sé cómo atraer personas interesadas.</span></button>
+          <button class="opt" type="button" role="radio" aria-checked="false" data-points="2"><span class="opt-l">B</span><span class="opt-t">Consigo algunas interacciones, pero me cuesta convertirlas en conversaciones con posibles prospectos.</span></button>
+          <button class="opt" type="button" role="radio" aria-checked="false" data-points="3"><span class="opt-l">C</span><span class="opt-t">Tengo conversaciones, pero me cuesta identificar quién está realmente interesado y cómo darle seguimiento.</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 · PREGUNTA 2 -->
+    <section class="slide slide--q" data-index="2" data-nojs="hide" aria-labelledby="t-q2">
+      <div class="q">
+        <div class="q-head">
+          <button class="back" type="button" data-prev aria-label="Volver a la pregunta anterior">← Atrás</button>
+          <p class="q-count">Pregunta <b>2</b> de 3</p>
+        </div>
+        <div class="q-bar" aria-hidden="true"><span style="--p:.666"></span></div>
+        <div class="q-ask">
+          <img class="q-avatar" src="assets/img/logo-networker-ia.webp?v=20261113" alt="" width="48" height="48">
+          <h2 id="t-q2" class="q-title">¿Cómo estás consiguiendo prospectos actualmente para tu negocio multinivel?</h2>
+        </div>
+        <div class="options" role="radiogroup" aria-labelledby="t-q2" data-q="2">
+          <button class="opt" type="button" role="radio" aria-checked="false" data-points="1"><span class="opt-l">A</span><span class="opt-t">Dependo principalmente de familiares, amigos y conocidos.</span></button>
+          <button class="opt" type="button" role="radio" aria-checked="false" data-points="2"><span class="opt-l">B</span><span class="opt-t">Grabo videos y publico contenido, pero no tengo un sistema organizado para conseguir prospectos.</span></button>
+          <button class="opt" type="button" role="radio" aria-checked="false" data-points="3"><span class="opt-l">C</span><span class="opt-t">Utilizo las redes sociales y los mensajes, pero hago el seguimiento manualmente y me cuesta organizarlo.</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 · PREGUNTA 3 -->
+    <section class="slide slide--q" data-index="3" data-nojs="hide" aria-labelledby="t-q3">
+      <div class="q">
+        <div class="q-head">
+          <button class="back" type="button" data-prev aria-label="Volver a la pregunta anterior">← Atrás</button>
+          <p class="q-count">Pregunta <b>3</b> de 3</p>
+        </div>
+        <div class="q-bar" aria-hidden="true"><span style="--p:1"></span></div>
+        <div class="q-ask">
+          <img class="q-avatar" src="assets/img/logo-networker-ia.webp?v=20261113" alt="" width="48" height="48">
+          <h2 id="t-q3" class="q-title">Si pudieras mejorar algo de tu prospección por internet, ¿qué sería?</h2>
+        </div>
+        <div class="options" role="radiogroup" aria-labelledby="t-q3" data-q="3">
+          <button class="opt" type="button" role="radio" aria-checked="false" data-points="1"><span class="opt-l">A</span><span class="opt-t">Aprender a atraer personas interesadas en mi negocio multinivel.</span></button>
+          <button class="opt" type="button" role="radio" aria-checked="false" data-points="2"><span class="opt-l">B</span><span class="opt-t">Crear contenido y videos más fácilmente, sin invertir tantas horas.</span></button>
+          <button class="opt" type="button" role="radio" aria-checked="false" data-points="3"><span class="opt-l">C</span><span class="opt-t">Tener una herramienta que me permita conocer mejor a cada prospecto, identificar sus necesidades y saber cómo presentarle mi oportunidad.</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 · CALCULANDO -->
+    <section class="slide slide--calc" data-index="4" data-nojs="hide" aria-live="polite">
+      <div class="calc">
+        <div class="calc-orbit" aria-hidden="true"><span></span><span></span><span></span><b></b></div>
+        <h2 class="calc-title">Analizando tus respuestas…</h2>
+        <p class="calc-sub" data-calc-msg>Sumando tus puntos y preparando tu diagnóstico.</p>
+      </div>
+    </section>
+
+    <!-- 5 · RESULTADO -->
+    <section class="slide slide--result" data-index="5" data-nojs="hide" aria-labelledby="t-result">
+      <div class="result">
+        <div class="gauge" aria-hidden="true">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="52" class="gauge-track"/>
+            <circle cx="60" cy="60" r="52" class="gauge-fill" pathLength="100"/>
+          </svg>
+          <div class="gauge-num"><b data-score>0</b><span>de 9</span></div>
+        </div>
+        <p class="eyebrow">Tu diagnóstico</p>
+
+        <article class="r" data-result="r1">
+          <h2 class="r-title" id="t-result">Tu prospección necesita una estrategia <span class="hl-green">desde cero.</span></h2>
+          <p>Estás haciendo esfuerzos por conseguir prospectos, pero todavía no tienes un sistema que te ayude a atraer personas interesadas de manera organizada.</p>
+          <p class="r-need"><b>Lo que necesitas:</b> aprender a utilizar herramientas de IA y un test digital para despertar el interés de las personas y atraer prospectos hacia tu negocio multinivel.</p>
+        </article>
+        <article class="r" data-result="r2" hidden>
+          <h2 class="r-title">Estás trabajando mucho, pero <span class="hl-green">necesitas un sistema.</span></h2>
+          <p>Publicas, grabas videos y buscas personas, pero muchas veces inviertes demasiado tiempo sin saber si estás llegando a los prospectos adecuados.</p>
+          <p class="r-need"><b>Lo que necesitas:</b> automatizar parte de tu estrategia de contenido y utilizar un test digital para captar y conocer mejor a tus prospectos.</p>
+        </article>
+        <article class="r" data-result="r3" hidden>
+          <h2 class="r-title">Ya estás prospectando, pero puedes hacerlo <span class="hl-green">de manera más inteligente.</span></h2>
+          <p>Tienes actividad en internet y estás buscando oportunidades, pero necesitas mejorar la forma de identificar, clasificar y dar seguimiento a las personas interesadas.</p>
+          <p class="r-need"><b>Lo que necesitas:</b> incorporar un test digital que te ayude a conocer las necesidades de tus prospectos y organizar mejor tu proceso de presentación.</p>
+        </article>
+
+        <button class="btn btn--blue" type="button" data-next>
+          Ver mi siguiente paso
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- 6 · INVITACIÓN WHATSAPP -->
+    <section class="slide slide--final" data-index="6" aria-labelledby="t-final">
+      <div class="final">
+        <p class="eyebrow eyebrow--gold">Tu siguiente paso</p>
+        <h2 id="t-final" class="title title--final">¡Tu crecimiento puede dar un <span class="hl-green">siguiente paso!</span></h2>
+        <p class="lead">¿Quieres aprender a prospectar con inteligencia artificial?</p>
+        <p class="final-text">Únete a nuestra comunidad de WhatsApp de <strong>Borge IA</strong> y recibe consejos, estrategias y herramientas para impulsar tu negocio multinivel con inteligencia artificial.</p>
+        <div class="classes">
+          <span class="classes-n">3</span>
+          <p>Entérate del lanzamiento de nuestras <strong>3 clases gratuitas</strong>, donde aprenderás cómo crear y utilizar un test digital para prospectar en redes de mercadeo.</p>
+        </div>
+        <p class="final-text">¡No te quedes fuera! Te esperamos en nuestra comunidad.</p>
+        <a class="btn btn--wa" href="https://chat.whatsapp.com/GXk68Wavu8VEea2MnmWwY0" target="_blank" rel="noopener" data-wa>
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16.04 3C8.87 3 3.05 8.82 3.05 15.99c0 2.29.6 4.53 1.74 6.5L3 29l6.68-1.75a12.94 12.94 0 0 0 6.36 1.66h.01c7.17 0 12.99-5.82 12.99-12.99 0-3.47-1.35-6.73-3.8-9.18A12.9 12.9 0 0 0 16.04 3Zm0 23.73h-.01a10.77 10.77 0 0 1-5.49-1.5l-.39-.23-3.97 1.04 1.06-3.87-.26-.4a10.74 10.74 0 0 1-1.65-5.78c0-5.95 4.84-10.79 10.8-10.79 2.88 0 5.59 1.12 7.63 3.16a10.72 10.72 0 0 1 3.16 7.63c0 5.96-4.84 10.8-10.79 10.8Zm5.92-8.08c-.32-.16-1.92-.95-2.22-1.06-.3-.11-.51-.16-.73.16-.22.32-.84 1.06-1.03 1.28-.19.22-.38.24-.7.08-.32-.16-1.37-.5-2.6-1.6-.96-.86-1.61-1.92-1.8-2.24-.19-.32-.02-.5.14-.66.15-.14.32-.38.48-.57.16-.19.21-.32.32-.54.11-.22.05-.4-.03-.57-.08-.16-.73-1.75-1-2.4-.26-.63-.53-.54-.73-.55h-.62c-.22 0-.57.08-.86.4-.3.32-1.13 1.1-1.13 2.69 0 1.58 1.16 3.12 1.32 3.33.16.22 2.28 3.48 5.52 4.88.77.33 1.37.53 1.84.68.77.25 1.48.21 2.03.13.62-.09 1.92-.78 2.19-1.54.27-.76.27-1.41.19-1.54-.08-.14-.3-.22-.62-.38Z"/></svg>
+          Quiero unirme a la comunidad de WhatsApp
+        </a>
+        <button class="again" type="button" data-go="0" data-nojs="hide">↺ Volver a hacer el test</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span>© 2026 Networker con IA</span>
+    <span class="dot" aria-hidden="true">·</span>
+    <span>Sitio creado con <a href="https://www.youtube.com/@NetworkerConIA" target="_blank" rel="noopener">Networker con IA</a></span>
+  </footer>
+</body>
+</html>
