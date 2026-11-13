@@ -5,3 +5,5 @@ Servida con nginx. Easypanel: fuente GitHub, builder **Dockerfile**, puerto **80
 
 - `site/` — HTML, CSS, JS y logo
 - `site/lib/manifest.js` — enlace de WhatsApp y rangos de puntaje
+
+Despliegue automático: cada push a `main` publica en https://networkerconia.tech (webhook de Easypanel).
