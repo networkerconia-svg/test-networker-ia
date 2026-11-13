@@ -1,0 +1,498 @@
+{
+  "name": "Test Martha · Registro, correo y hoja",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "test-martha",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "https://prospeccion.networkerconia.tech"
+        }
+      },
+      "id": "7092b5a4-0add-4084-ab4f-dda21d38ec21",
+      "name": "Webhook test",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "webhookId": "761cb45c-58fd-4e33-9b7b-8ec8b15baec3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Valida el registro, recalcula el puntaje en el servidor y arma el correo.\n// [CONFIGURAR] Número de WhatsApp de Martha (código de país + número, solo dígitos). Ej: 573001234567\nconst MARTHA_WA = '';\nconst LOGO_URL = 'https://prospeccion.networkerconia.tech/assets/img/logo-correo.png';\n\nconst body = $input.first().json.body || {};\nconst clean = (v, max = 200) => String(v ?? '').replace(/[\\u0000-\\u001f]/g, ' ').trim().slice(0, max);\nconst esc = (s) => String(s).replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#39;'}[c]));\n\nconst id = clean(body.id, 40);\nconst nombre = clean(body.nombre, 80);\nconst email = clean(body.email, 120).toLowerCase();\nconst autoriza = body.whatsapp_autoriza === true;\nconst whatsapp = autoriza ? clean(body.whatsapp, 20).replace(/[^\\d+]/g, '') : '';\n\nconst POINTS = { p1: {A:1,B:2,C:3}, p2: {A:1,B:3,C:2}, p3: {A:1,B:2,C:3}, p4: {A:1,B:2,C:3}, p5: {A:0,B:0,C:0} };\nconst TEXTS = {\n  p1: {A:'Sí, estoy logrando buenos resultados.', B:'Gano, pero esperaba mucho más.', C:'No consigo los ingresos que deseo.'},\n  p2: {A:'No, puedo cobrar sin depender de rangos.', B:'Sí, necesito alcanzar determinados rangos.', C:'No conozco bien las condiciones de mi plan.'},\n  p3: {A:'Sí, sé cómo hacerlo.', B:'Conozco algunas técnicas, pero me falta práctica.', C:'No, normalmente solo explico y espero su respuesta.'},\n  p4: {A:'Sí, tengo un sistema que puedo duplicar.', B:'Tengo algunas estrategias, pero no soy constante.', C:'No, todavía no tengo un sistema definido.'},\n  p5: {A:'Un plan de compensación con mejores posibilidades de crecimiento.', B:'Formación, herramientas digitales y acompañamiento.', C:'Una empresa que reúna todo lo anterior.'}\n};\n\nconst errors = [];\nif (!/^[a-f0-9]{8,40}$/i.test(id)) errors.push('id');\nif (nombre.length < 2) errors.push('nombre');\nif (!/^[^\\s@]+@[^\\s@]+\\.[a-z]{2,}$/i.test(email)) errors.push('email');\nif (autoriza && !/^\\+\\d{9,15}$/.test(whatsapp)) errors.push('whatsapp');\n\nconst answers = {};\nlet puntaje = 0;\nfor (const k of ['p1','p2','p3','p4','p5']) {\n  const letra = clean(body[k] && body[k].letra, 1).toUpperCase();\n  if (!(letra in POINTS[k])) { errors.push(k); continue; }\n  answers[k] = `${letra} — ${TEXTS[k][letra]}`;\n  puntaje += POINTS[k][letra];   // p5 suma 0: solo segmenta\n}\n\nif (errors.length) return [{ json: { valid: false, errors } }];\n\nconst RESULTS = [\n  { min: 4, max: 5, title: '¡Felicidades! Tu multinivel te impulsa.', paras: [\n    'La empresa que elegiste te está ofreciendo condiciones que favorecen tu crecimiento. ¡Eso es una buena noticia!',\n    'Pero quiero hacerte una pregunta: ¿te has puesto a pensar que podrían existir otras empresas de mercadeo en red que te ofrezcan todavía más posibilidades para crecer y alcanzar tus metas?'] },\n  { min: 6, max: 8, title: 'Tienes oportunidades de crecimiento.', paras: [\n    'La empresa que elegiste tiene aspectos que pueden ayudarte a avanzar, pero también hay oportunidades que quizá todavía no estás aprovechando.',\n    'Ahora bien, ¿te has preguntado si existen otras empresas de mercadeo en red que podrían ofrecerte mejores condiciones para crecer y desarrollar tu negocio?'] },\n  { min: 9, max: 10, title: 'Tu multinivel podría estar limitándote.', paras: [\n    'Tus respuestas muestran que hay aspectos de tu negocio que podrían estar frenando tus resultados.',\n    'Quizá no se trata de trabajar más, sino de contar con un plan de compensación y un sistema de trabajo que te permitan avanzar con mayores posibilidades.',\n    '¿Te has dado la oportunidad de conocer otras empresas antes de seguir invirtiendo tu tiempo y esfuerzo?'] },\n  { min: 11, max: 12, title: 'Es momento de evaluar nuevas oportunidades.', paras: [\n    'Tus respuestas muestran que hay varios aspectos de tu negocio que no están funcionando como esperas.',\n    'Tal vez sea momento de preguntarte si la empresa que elegiste actualmente es la mejor opción para alcanzar tus objetivos o si existe otra oportunidad de mercadeo en red que se ajuste mejor a lo que estás buscando.'] }\n];\nconst res = RESULTS.find(r => puntaje >= r.min && puntaje <= r.max) || RESULTS[3];\n\nconst waText = `Hola Martha, soy ${nombre}. Hice el test «¿Tu multinivel te impulsa o te limita?» y mi resultado fue: «${res.title.replace(/\\.$/, '')}». Quiero conocer esta oportunidad.`;\nconst waUrl = `https://wa.me/${MARTHA_WA}?text=${encodeURIComponent(waText)}`;\n\nconst desc = res.paras.map(p => `<p style=\"margin:0 0 10px;\">${esc(p)}</p>`).join('');\nconst html = `<!DOCTYPE html><html lang=\"es\"><body style=\"margin:0;padding:0;background:#FFF9F2;\">\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#FFF9F2;\"><tr><td align=\"center\" style=\"padding:28px 12px;\">\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:600px;background:#FFFFFF;border-radius:18px;border:1px solid #eee3d3;overflow:hidden;font-family:Arial,Helvetica,sans-serif;color:#142D4E;\">\n<tr><td style=\"height:5px;background:#16A6A1;font-size:0;line-height:0;\">&nbsp;</td></tr>\n<tr><td align=\"center\" style=\"padding:28px 28px 8px;\"><img src=\"${LOGO_URL}\" width=\"96\" height=\"96\" alt=\"Martha Lucía Hoyos\" style=\"display:block;border-radius:50%;border:3px solid #D4AD63;\"></td></tr>\n<tr><td style=\"padding:12px 32px 0;font-size:16px;line-height:1.6;\">\n<p style=\"margin:0 0 12px;\">Hola, <strong>${esc(nombre)}</strong>.</p>\n<p style=\"margin:0 0 18px;\">¡Gracias por realizar nuestro test!</p>\n<p style=\"margin:0 0 10px;color:#4d5f78;\">De acuerdo con tus respuestas, este es el resultado de tu evaluación:</p></td></tr>\n<tr><td style=\"padding:6px 32px 4px;\"><div style=\"background:#eefaf9;border-left:5px solid #16A6A1;border-radius:12px;padding:18px 20px;\">\n<p style=\"margin:0 0 10px;font-size:21px;font-weight:bold;color:#142D4E;line-height:1.3;\">${esc(res.title)}</p>\n<div style=\"font-size:15.5px;line-height:1.6;color:#3f5270;\">${desc}</div></div></td></tr>\n<tr><td style=\"padding:18px 32px 0;font-size:16px;line-height:1.6;\">\n<p style=\"margin:0 0 12px;\">Quiero invitarte a reflexionar sobre algo:</p>\n<p style=\"margin:0 0 12px;background:#fdf3e6;border-radius:12px;padding:14px 16px;color:#142D4E;\">¿Y si existiera una empresa de mercadeo en red que te ofreciera mejores posibilidades para desarrollar tu negocio, generar ingresos residuales y brindar mayor bienestar a tu familia?</p>\n<p style=\"margin:0 0 12px;\">Yo elegí una empresa para desarrollar mi negocio y quiero darte la oportunidad de conocerla.</p>\n<p style=\"margin:0 0 18px;\">Si deseas conversar conmigo y conocer esta oportunidad, puedes hacerlo a través de WhatsApp:</p></td></tr>\n<tr><td align=\"center\" style=\"padding:0 32px 26px;\"><a href=\"${waUrl}\" style=\"display:inline-block;background:#16A6A1;color:#FFFFFF;text-decoration:none;font-weight:bold;font-size:16px;letter-spacing:.03em;padding:15px 30px;border-radius:999px;border:2px solid #ead3a0;\">QUIERO CONOCER ESTA OPORTUNIDAD</a></td></tr>\n<tr><td style=\"padding:0 32px 30px;font-size:16px;line-height:1.5;border-top:1px solid #f0e6d6;\">\n<p style=\"margin:22px 0 4px;\">Un abrazo,</p>\n<p style=\"margin:0;font-family:'Brush Script MT',cursive;font-size:30px;color:#142D4E;\">Martha Lucía Hoyos C.</p>\n<p style=\"margin:2px 0 0;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:#b48a3e;font-weight:bold;\">Empresaria y líder en mercadeo en red</p></td></tr>\n</table>\n<p style=\"max-width:600px;margin:14px auto 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#8a97a8;line-height:1.5;\">Recibiste este correo porque realizaste el test «¿Tu multinivel te impulsa o te limita?» y autorizaste el tratamiento de tus datos.</p>\n</td></tr></table></body></html>`;\n\nreturn [{ json: {\n  valid: true,\n  id, nombre, email, ...answers, puntaje,\n  resultado: res.title,\n  whatsapp_autoriza: autoriza ? 'Sí' : 'No',\n  whatsapp,\n  fecha: DateTime.now().setZone('America/Bogota').toFormat('yyyy-MM-dd HH:mm:ss'),\n  origen: clean(body.origen, 200),\n  asunto: 'Tu resultado del test: ¿Tu multinivel te impulsa o te limita?',\n  html\n} }];\n"
+      },
+      "id": "f25b836d-0904-4bc1-8f82-459cb7fbde92",
+      "name": "Validar y preparar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "451a0c4f-5d23-4e4a-b8d8-920c0b83a47e",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3439bced-fc39-4504-baed-f293e4a50f60",
+      "name": "¿Datos válidos?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1zIuovbrdAWEAh4wyzagSDE4DfoKkAfxq4-J2IqsjzKs",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Registros",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zIuovbrdAWEAh4wyzagSDE4DfoKkAfxq4-J2IqsjzKs/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "ID",
+              "lookupValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "496e485f-5e53-4c92-acd8-1f86ba4fa09b",
+      "name": "Buscar duplicado",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        660,
+        200
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "3011e3f1-a411-4fea-8e9d-ce82d136495c",
+              "leftValue": "={{ $json.ID }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "41d703db-2839-4922-bcd9-d1e4ccdcf78e",
+      "name": "¿Ya registrado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        880,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Validar y preparar').item.json.email }}",
+        "subject": "={{ $('Validar y preparar').item.json.asunto }}",
+        "emailType": "html",
+        "message": "={{ $('Validar y preparar').item.json.html }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Martha Lucía Hoyos C."
+        }
+      },
+      "id": "fe9d376f-4b5a-4c03-8e15-ed5f0bd6feb2",
+      "name": "Enviar correo",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1100,
+        300
+      ],
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 2
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1zIuovbrdAWEAh4wyzagSDE4DfoKkAfxq4-J2IqsjzKs",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Registros",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zIuovbrdAWEAh4wyzagSDE4DfoKkAfxq4-J2IqsjzKs/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $('Validar y preparar').item.json.id }}",
+            "Fecha": "={{ $('Validar y preparar').item.json.fecha }}",
+            "Nombre": "={{ $('Validar y preparar').item.json.nombre }}",
+            "Correo": "={{ $('Validar y preparar').item.json.email }}",
+            "P1 Ingresos": "={{ $('Validar y preparar').item.json.p1 }}",
+            "P2 Rangos": "={{ $('Validar y preparar').item.json.p2 }}",
+            "P3 Cierres": "={{ $('Validar y preparar').item.json.p3 }}",
+            "P4 Sistema": "={{ $('Validar y preparar').item.json.p4 }}",
+            "P5 Busca en una empresa": "={{ $('Validar y preparar').item.json.p5 }}",
+            "Puntaje": "={{ $('Validar y preparar').item.json.puntaje }}",
+            "Resultado": "={{ $('Validar y preparar').item.json.resultado }}",
+            "Autoriza WhatsApp": "={{ $('Validar y preparar').item.json.whatsapp_autoriza }}",
+            "WhatsApp": "={{ $('Validar y preparar').item.json.whatsapp }}",
+            "Correo enviado": "={{ $json.id ? 'Sí' : 'No' }}",
+            "Origen": "={{ $('Validar y preparar').item.json.origen }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fecha",
+              "displayName": "Fecha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Correo",
+              "displayName": "Correo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "P1 Ingresos",
+              "displayName": "P1 Ingresos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "P2 Rangos",
+              "displayName": "P2 Rangos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "P3 Cierres",
+              "displayName": "P3 Cierres",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "P4 Sistema",
+              "displayName": "P4 Sistema",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "P5 Busca en una empresa",
+              "displayName": "P5 Busca en una empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Puntaje",
+              "displayName": "Puntaje",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resultado",
+              "displayName": "Resultado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Autoriza WhatsApp",
+              "displayName": "Autoriza WhatsApp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "WhatsApp",
+              "displayName": "WhatsApp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Correo enviado",
+              "displayName": "Correo enviado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Origen",
+              "displayName": "Origen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "f1815cf1-77a2-4f4e-92c7-c2dccb1f3751",
+      "name": "Guardar registro",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1320,
+        300
+      ],
+      "onError": "continueRegularOutput",
+      "retryOnFail": true,
+      "maxTries": 3
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, emailSent: !!$('Enviar correo').item.json.id }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "2afe730d-a097-495d-ba55-e43b2a0d25a5",
+      "name": "Responder OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1540,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true, duplicate: true, emailSent: true }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "406f75af-d6d9-4592-a862-d8f39f587f3c",
+      "name": "Responder duplicado",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1100,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: false, errors: $json.errors }) }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "b85a02a3-b9c4-4fa2-8dc9-3fb7981b2e1f",
+      "name": "Responder error 400",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        460
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook test": {
+      "main": [
+        [
+          {
+            "node": "Validar y preparar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar y preparar": {
+      "main": [
+        [
+          {
+            "node": "¿Datos válidos?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Datos válidos?": {
+      "main": [
+        [
+          {
+            "node": "Buscar duplicado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder error 400",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar duplicado": {
+      "main": [
+        [
+          {
+            "node": "¿Ya registrado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Ya registrado?": {
+      "main": [
+        [
+          {
+            "node": "Responder duplicado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar correo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar correo": {
+      "main": [
+        [
+          {
+            "node": "Guardar registro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar registro": {
+      "main": [
+        [
+          {
+            "node": "Responder OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Bogota"
+  },
+  "pinData": {}
+}

@@ -17,7 +17,7 @@
 
     // [CONFIGURAR] URL que recibe los registros (webhook de n8n / Make / Apps Script).
     // Recibe un POST JSON con todos los datos. Déjalo vacío para no enviar nada.
-    endpoint: "",
+    endpoint: "https://tests-digitales-n8n.q6lzzd.easypanel.host/webhook/test-martha",
 
     // Prefijo sugerido para el campo de WhatsApp del participante
     defaultCountryCode: "+57",
